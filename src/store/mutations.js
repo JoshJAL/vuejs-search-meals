@@ -19,3 +19,7 @@ export function setMealsByLetter(state, meals) {
 export function setMealsByIngredient(state, meals) {
   state.mealsByIngredient = meals;
 }
+
+export function setLoading(state, loading) {
+  state.searchedMeals.loading = loading;
+}

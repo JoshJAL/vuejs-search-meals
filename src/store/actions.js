@@ -15,13 +15,22 @@ export function clickHome({ commit }) {
 }
 
 export function searchMealsByLetter({ commit }, letter) {
+  setLoading({ commit }, true);
   axiosClient.get('search.php?f=' + letter).then(({ data }) => {
     commit('setMealsByLetter', data.meals);
+    setLoading({ commit }, false);
   });
 }
 
 export function searchMealsByIngredient({ commit }, ingredient) {
+  setLoading({ commit }, true);
+
   axiosClient.get('filter.php?i=' + ingredient).then(({ data }) => {
     commit('setMealsByIngredient', data.meals);
   });
+  setLoading({ commit }, false);
+}
+
+export function setLoading({ commit }, loading) {
+  commit('setLoading', loading);
 }

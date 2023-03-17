@@ -3,17 +3,21 @@ import { computed, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import MealItems from '../components/MealItems.vue';
 import store from '../store';
+import LoadingSpinner from '../components/LoadingSpinner.vue';
 
 const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const meals = computed(() => store.state.mealsByLetter);
 const route = useRoute();
+const loading = computed(() => store.state.searchedMeals.loading);
 
 watch(route, () => {
   store.dispatch('searchMealsByLetter', route.params.letter);
 });
 
 onMounted(() => {
-  store.dispatch('searchMealsByLetter', route.params.letter);
+  if (route.params.letter) {
+    store.dispatch('searchMealsByLetter', route.params.letter);
+  }
 });
 </script>
 
@@ -28,7 +32,10 @@ onMounted(() => {
     >
   </div>
 
-  <div v-if="meals" class="grid grid-cols-1 md:grid-cols-3 gap-5 p-8">
+  <div v-if="loading === true" class="w-full flex mt-10 justify-center h-full">
+    <LoadingSpinner />
+  </div>
+  <div v-else-if="loading === false && meals" class="grid grid-cols-1 md:grid-cols-3 gap-5 p-8">
     <MealItems v-for="meal of meals" :key="meal.idMeal" :meal="meal" />
   </div>
 

@@ -3,13 +3,16 @@ import { ref, computed, onMounted } from 'vue';
 import store from '../store/index.js';
 import { useRoute } from 'vue-router';
 import MealItems from '../components/MealItems.vue';
+import LoadingSpinner from '../components/LoadingSpinner.vue';
 
 const keyword = ref('');
 const meals = computed(() => store.state.searchedMeals.data);
 const route = useRoute();
+const loading = computed(() => store.state.searchedMeals.loading);
 
 function searchByKeyword() {
   if (keyword.value) {
+    store.dispatch('setLoading', true);
     store.dispatch('searchByKeyword', keyword.value);
   }
 }
@@ -33,8 +36,10 @@ onMounted(() => {
       @change="searchByKeyword"
     />
   </div>
-
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-5 p-8">
+  <div v-if="loading === true" class="w-full flex mt-10 justify-center h-full">
+    <LoadingSpinner />
+  </div>
+  <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-5 p-8">
     <MealItems v-if="meals" v-for="meal of meals" :key="meal.idMeal" :meal="meal" />
     <h1 v-else class="text-xl text-center font-semibold">Nothing to display</h1>
   </div>
